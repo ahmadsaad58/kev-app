@@ -5,21 +5,25 @@
 //  Created by Saad Ahmad on 5/11/25.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @Query private var tasks: [Task]
+    @State private var showAdd = false
+    @State private var newTitle = "New Task"
 
     var body: some View {
+
         NavigationSplitView {
+            
             List {
-                ForEach(items) { item in
+                ForEach(tasks) { task in
                     NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
+                        Text("Task at \(task.title)")
                     } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+                        Text(task.title)
                     }
                 }
                 .onDelete(perform: deleteItems)
@@ -29,27 +33,53 @@ struct ContentView: View {
                     EditButton()
                 }
                 ToolbarItem {
-                    Button(action: addItem) {
+                    Button(showAdd = true) {
                         Label("Add Item", systemImage: "plus")
                     }
+                    .alert("Add Task",
+                           isPresented: $showAdd,
+                           actions: {
+                        TextField("Title", text: $newTitle)
+                        Button("Save") {
+                            tasks.append(newTitle)
+                            newTitle = ""
+                        }.disabled(newTitle.isEmpty)
+                        Button("Cancel", role: .cancel) { newTitle = "" }
+                    },
+                           message: { Text("Enter a short title") })
                 }
+            }
+            ToolbarItem {
+                Button(action: deleteAllItems) {
+                    Label("Delete All", systemImage: "trash.fill")
+                }
+            }
+        }
             }
         } detail: {
             Text("Select an item")
         }
     }
 
-    private func addItem() {
+    private func addItem(title: String) {
         withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
+            let newTask = Task(title: title)
+            modelContext.insert(newTask)
         }
     }
 
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-                modelContext.delete(items[index])
+                modelContext.delete(tasks[index])
+            }
+        }
+    }
+
+    private func deleteAllItems() {
+        withAnimation {
+            for task in tasks {
+                modelContext.delete(task)
             }
         }
     }
@@ -57,5 +87,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: Task.self, inMemory: true)
 }
