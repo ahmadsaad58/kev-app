@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class Reminder {
+final class Reminder: Identifiable {
     var id: UUID
     var title: String
     var isCompleted: Bool

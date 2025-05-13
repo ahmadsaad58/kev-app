@@ -27,6 +27,6 @@ struct To_DoApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(sharedModelContainer)
+        .modelContainer(for: Reminder.self)
     }
 }

@@ -26,7 +26,10 @@ struct AddReminderView: View {
                     .focused($focusedField, equals: .title)
                 DatePicker(
                     "Due Date",
-                    selection: $reminderDate,
+                    selection: Binding<Date>(
+                        get: { reminder.dueDate ?? Date() },
+                        set: { reminder.dueDate = $0 }
+                    ),
                     displayedComponents: [.date, .hourAndMinute]
                 )
                 .datePickerStyle(CompactDatePickerStyle())

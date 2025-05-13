@@ -19,6 +19,10 @@ struct ContentView: View {
         isAddReminderDialogPresented.toggle()
     }
 
+    private func addReminder(_ r: Reminder) {
+        modelContext.insert(r)
+    }
+
     var body: some View {
         NavigationStack {
             List($reminders, editActions: [.delete, .move]) { $reminder in
@@ -76,7 +80,12 @@ struct ContentView: View {
                 if let index = reminders.firstIndex(where: {
                     $0.id == reminder.id
                 }) {
-                    EditReminderView(reminder: $reminders[index])
+                    EditReminderView(
+                        reminder: Binding(
+                            get: { reminders[index] },
+                            set: { reminders[index] = $0 }
+                        )
+                    )
                 }
             }
         }
