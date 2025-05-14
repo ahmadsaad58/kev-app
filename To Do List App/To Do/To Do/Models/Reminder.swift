@@ -25,6 +25,8 @@ final class Reminder: Identifiable {
     }
 }
 
+
+// TODO: Remove this and have data populated from storage
 extension Reminder {
     static let samples: [Reminder] = [
         Reminder(title: "Add a Reminder")
