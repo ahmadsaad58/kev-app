@@ -26,36 +26,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             List($reminders, editActions: [.delete, .move]) { $reminder in
-                HStack {
-                    Image(
-                        systemName: reminder.isCompleted
-                            ? "checkmark.circle" : "circle"
-                    )
-                    .imageScale(.large)
-                    .foregroundColor(.accentColor)
-                    .onTapGesture {
-                        reminder.isCompleted.toggle()
-                    }
-                    VStack(alignment: .leading) {
-                        Text(reminder.title)
-                            .font(.headline)
-
-                        if let dueDate = reminder.dueDate {
-                            Text(
-                                "Due: \(dueDate, style: .date) at \(dueDate, style: .time)"
-                            )
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                        } else {
-                            Text("No due date")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                    .onTapGesture {
-                        selectedReminder = reminder
-                    }
-                }
+                ReminderRowView(reminder: reminder)
             }
             .navigationTitle(Text("Reminders"))
             .toolbar {

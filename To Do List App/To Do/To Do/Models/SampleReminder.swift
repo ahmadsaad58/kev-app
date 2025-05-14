@@ -6,3 +6,15 @@
 //
 
 import Foundation
+
+/// For Previews and Testing
+extension Reminder {
+    static let samples: [Reminder] = [
+        Reminder(
+            title: "Add a Reminder",
+            isCompleted: false,
+            dueDate: Date().addingTimeInterval(3600)
+        )
+    ]
+    
+}

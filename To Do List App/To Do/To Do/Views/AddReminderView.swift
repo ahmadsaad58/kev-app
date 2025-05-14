@@ -1,5 +1,5 @@
 //
-//  EditReminderView.swift
+//  ReminderView.swift
 //  To Do
 //
 //  Created by Saad Ahmad on 5/12/25.
@@ -7,51 +7,52 @@
 
 import SwiftUI
 
-struct EditReminderView: View {
+struct AddReminderView: View {
     @Environment(\.dismiss) private var dismiss
     @FocusState private var focusedField: FocusableField?
-    @Binding var reminder: Reminder
+    @State private var reminder = Reminder(title: "")
+    @State private var reminderDate = Date()
+
+    var onCommit: (_ reminder: Reminder) -> Void
 
     var body: some View {
-        renderEditForm
+        renderAddForm
             .navigationViewModifier(
-                "Edit Reminder",
+                "New Reminder",
                 onCancel: { dismiss() },
-                onConfirm: { dismiss() },
+                onConfirm: {
+                    onCommit(reminder)
+                    dismiss()
+                },
+                confirmText: "Add",
                 onConfirmDisabled: reminder.title.isEmpty,
                 onAppear: {
                     focusedField = .title
                 }
             )
-
     }
 
-    /// View for Edit Reminder Form
-    private var renderEditForm: some View {
+    /// View for Add Reminder Form
+    private var renderAddForm: some View {
         Form {
             TextField("Title", text: $reminder.title)
                 .focused($focusedField, equals: .title)
-            Toggle(isOn: $reminder.isCompleted) {
-                Text("Completed")
-            }
             DatePicker(
                 "Due Date",
-                selection: Binding(
+                selection: Binding<Date>(
                     get: { reminder.dueDate ?? Date() },
                     set: { reminder.dueDate = $0 }
                 ),
                 displayedComponents: [.date, .hourAndMinute]
             )
+            .datePickerStyle(CompactDatePickerStyle())
         }
-
     }
 }
 
 #Preview {
-    EditReminderView(
-        reminder: .constant(
-            Reminder.samples[0]
-        )
-    )
+    AddReminderView { reminder in
+        print("You added a new reminder titled \(reminder.title)")
+    }
     .modelContainer(for: Reminder.self, inMemory: false)
 }
